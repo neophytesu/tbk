@@ -1,0 +1,11 @@
+http{
+    # 将 http://localhost:8080/api/ 重定向到 http://localhost:9527/
+    server{
+        listen 8080;
+        server_name localhost;
+        location /api{
+            proxy_pass http://localhost:9527/;
+            rewrite ^/api/(.*)$ /$1 break;
+        }
+    }
+}

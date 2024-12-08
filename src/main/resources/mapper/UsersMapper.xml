@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.su.tbk.mapper.UsersMapper">
+
+    <resultMap id="BaseResultMap" type="com.su.tbk.domain.dao.Users">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="OTHER" typeHandler="com.su.tbk.core.StringTypeHandler" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,password,
+        role
+    </sql>
+    <select id="selectByUsername" resultType="String">
+        SELECT role[1] From users WHERE username = #{username}
+    </select>
+</mapper>
