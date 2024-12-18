@@ -7,7 +7,6 @@ plugins {
 
 group = "com.su"
 version = "0.0.1-SNAPSHOT"
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -27,6 +26,7 @@ repositories {
 
 
 dependencies {
+
     ext {
         set("druidVersion", "1.2.24")
         set("mybatisPlusVersion", "3.5.9")
@@ -38,6 +38,7 @@ dependencies {
         set("jjwtVersion", "0.12.6")
         set("testSecurityVersion", "6.4.1")
         set("hutoolVersion", "5.8.34")
+        set("fabricGatewayVersion", "2.2.9")
     }
     //实现依赖
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -55,7 +56,8 @@ dependencies {
     implementation("com.alibaba.fastjson2:fastjson2:${ext.get("fastjsonVersion")}")
     implementation("io.jsonwebtoken:jjwt-api:${ext.get("jjwtVersion")}")
     implementation("cn.hutool:hutool-all:${ext.get("hutoolVersion")}")
-
+    implementation("org.hyperledger.fabric:fabric-gateway-java:${ext.get("fabricGatewayVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-freemarker")
 
     //编译时依赖
     compileOnly("org.projectlombok:lombok")
@@ -74,7 +76,15 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 }
-
+subprojects{
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    dependencies{
+        ext{
+            set("fabricChaincodeVersion", "2.5.5")
+        }
+        implementation("org.hyperledger.fabric-chaincode-java:fabric-chaincode-shim:${ext.get("fabricChaincodeVersion")}")
+    }
+}
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
