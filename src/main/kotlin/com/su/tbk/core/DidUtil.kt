@@ -96,9 +96,9 @@ fun generateDidDocument(did: String, masterPublicKey: String, slavePublicKey: St
     return generateString(template, dataMap)
 }
 
-//生成Did请求文件
+//生成Did请求
 fun generateDidRequest(did: String, didDocument: String): String {
-    val template = getTemplate("DidRequest.json.ftl")
+    val template = getTemplate("CreateDidRequest.json.ftl")
     val timestamp = Instant.now().toEpochMilli().toString()
     val dataMap =
         mapOf(
@@ -108,7 +108,31 @@ fun generateDidRequest(did: String, didDocument: String): String {
         )
     return generateString(template, dataMap)
 }
-
+//更新Did请求
+fun updateDidRequest(did: String, didDocument: String,signatureValue: String): String {
+    val template= getTemplate("UpdateDidRequest.json.ftl")
+    val timestamp = Instant.now().toEpochMilli().toString()
+    val dataMap =
+        mapOf(
+            "did" to did,
+            "timeStamp" to timestamp,
+            "document" to didDocument,
+            "signature" to signatureValue
+        )
+    return generateString(template, dataMap)
+}
+//注销Did请求
+fun revokeDidRequest(did: String, signatureValue: String): String {
+    val template = getTemplate("RevokeDidRequest.json.ftl")
+    val timestamp = Instant.now().toEpochMilli().toString()
+    val dataMap =
+        mapOf(
+            "did" to did,
+            "timeStamp" to timestamp,
+            "signature" to signatureValue
+        )
+    return generateString(template, dataMap)
+}
 fun main() {
     Security.addProvider(BouncyCastleProvider())
     val keyPair1 = generateKeys()
