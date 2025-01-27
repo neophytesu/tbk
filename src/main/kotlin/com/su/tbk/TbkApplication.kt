@@ -5,11 +5,13 @@ import org.mybatis.spring.annotation.MapperScan
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.core.env.Environment
 import java.security.Security
 
 @SpringBootApplication
 @MapperScan("com.su.tbk.mapper")
+@EnableAspectJAutoProxy
 class TbkApplication
 
 fun main(args: Array<String>) {

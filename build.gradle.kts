@@ -39,9 +39,11 @@ dependencies {
         set("testSecurityVersion", "6.4.1")
         set("hutoolVersion", "5.8.34")
         set("fabricGatewayVersion", "2.2.9")
+        set("jacksonVersion", "2.18.2")
     }
     //实现依赖
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.baomidou:mybatis-plus-spring-boot3-starter:${ext.get("mybatisPlusVersion")}")
@@ -58,6 +60,7 @@ dependencies {
     implementation("cn.hutool:hutool-all:${ext.get("hutoolVersion")}")
     implementation("org.hyperledger.fabric:fabric-gateway-java:${ext.get("fabricGatewayVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-freemarker")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${ext.get("jacksonVersion")}")
 
     //编译时依赖
     compileOnly("org.projectlombok:lombok")

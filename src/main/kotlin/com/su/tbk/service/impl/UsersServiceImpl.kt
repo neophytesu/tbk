@@ -10,13 +10,13 @@ import com.su.tbk.core.Slf4j
 import com.su.tbk.core.Slf4j.Companion.log
 import com.su.tbk.core.createJWT
 import com.su.tbk.domain.dao.Users
+import com.su.tbk.domain.dto.UserDetailDTO
 import com.su.tbk.mapper.UsersMapper
 import com.su.tbk.service.UsersService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.Objects.isNull
@@ -41,14 +41,6 @@ class UsersServiceImpl : ServiceImpl<UsersMapper?, Users?>(), UsersService {
 
     @Autowired
     lateinit var passwordEncoder: PasswordEncoder
-    override fun hello(): String {
-        val users = usersMapper.selectByUsername("su")
-        Slf4j.log.info("hello{}", users)
-        val users2 = usersMapper.selectById(1)
-        Slf4j.log.info("hello{}", users2)
-        objectRedisTemplate.opsForValue()["hello"] = users2!!
-        return usersMapper.selectById(1)?.username!!
-    }
 
     override fun login(user: Users): BaseResponse {
         val authenticationToken = UsernamePasswordAuthenticationToken(user.username, user.password)
@@ -59,8 +51,14 @@ class UsersServiceImpl : ServiceImpl<UsersMapper?, Users?>(), UsersService {
         val users = authenticate.principal as UserDetailsImpl
         val jwt = createJWT(users.username)
         val redisKey = "login:${users.username}"
-        objectRedisTemplate.opsForValue()[redisKey]=users
-        objectRedisTemplate.expire(redisKey, 1, TimeUnit.HOURS)
+
+        val roles = ArrayList<String>()
+        for (role in users.authorities) {
+            roles.add(role.authority)
+        }
+        val userDetailDTO = UserDetailDTO(users.username, users.password, roles)
+        objectRedisTemplate.opsForValue()[redisKey] = userDetailDTO
+        objectRedisTemplate.expire(redisKey, 1, TimeUnit.DAYS)
         return success(data = mapOf("token" to jwt))
     }
 
@@ -74,7 +72,7 @@ class UsersServiceImpl : ServiceImpl<UsersMapper?, Users?>(), UsersService {
                 Users(
                     username = user.username,
                     password = encodePassword,
-                    role = arrayOf("ROlE_USER")
+                    role = arrayOf("ROLE_USER")
                 )
             ) > 0
         ) {

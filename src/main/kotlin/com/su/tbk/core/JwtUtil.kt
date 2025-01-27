@@ -8,8 +8,8 @@ import java.util.*
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
-//有效期为一小时
-const val JWT_TTL = 60 * 60 * 1000L
+//有效期为一天
+const val JWT_TTL = 24 * 60 * 60 * 1000L
 
 //秘钥明文
 const val JWT_KEY = "Z2F1Y2hlbmVzc3l1cnV5dWNoZW5naHVhbmd5dWNoZW5n"

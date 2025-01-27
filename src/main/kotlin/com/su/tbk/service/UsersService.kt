@@ -10,7 +10,6 @@ import com.su.tbk.domain.dao.Users
  * @createDate 2024-12-05 14:57:12
  */
 interface UsersService : IService<Users?>{
-    fun hello(): String
     fun login(user: Users): BaseResponse
     fun register(user: Users): BaseResponse
 }

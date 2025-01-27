@@ -1,9 +1,10 @@
 package com.su.tbk.config
 
-import com.alibaba.fastjson2.annotation.JSONField
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.fasterxml.jackson.annotation.*
 import com.su.tbk.core.parseJWT
 import com.su.tbk.domain.dao.Users
+import com.su.tbk.domain.dto.UserDetailDTO
 import com.su.tbk.mapper.UsersMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -97,14 +98,19 @@ class UserDetailsServiceImpl : UserDetailsService {
     }
 }
 
-class UserDetailsImpl(
+class UserDetailsImpl @JsonCreator constructor(
     private val username: String?,
-    private val password: String?, @JSONField(serialize = false)
-    private val authorities: MutableCollection<SimpleGrantedAuthority> = mutableListOf()
+    private val password: String?,
+    private val authorities: List<SimpleGrantedAuthority> = ArrayList()
 ) : UserDetails {
-    constructor(user: Users, authorities: MutableCollection<SimpleGrantedAuthority>) : this(user.username, user.password,authorities)
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+    constructor(user: Users, authorities: List<SimpleGrantedAuthority>) : this(
+        user.username,
+        user.password,
+        authorities
+    )
+
+    override fun getAuthorities(): List<GrantedAuthority> {
         return authorities
     }
 
@@ -114,22 +120,6 @@ class UserDetailsImpl(
 
     override fun getUsername(): String {
         return username!!
-    }
-
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
-
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isEnabled(): Boolean {
-        return true
     }
 }
 
@@ -152,11 +142,13 @@ class JwtAuthenticationTokenFilter : OncePerRequestFilter() {
         }
         val claims = parseJWT(token)
         val username = claims.subject
-        val users = objectRedisTemplate.opsForValue()["login:${username}"]
-        if (isNull(users)) {
+        val userDetailDTO = objectRedisTemplate.opsForValue()["login:$username"] as UserDetailDTO
+        if (isNull(userDetailDTO)) {
             throw RuntimeException("用户未登录")
         }
-        val authenticationToken = UsernamePasswordAuthenticationToken(users, null, null)
+        val roles = userDetailDTO.authorities.map { SimpleGrantedAuthority(it) }.toMutableList()
+        val userDetailsImpl = UserDetailsImpl(userDetailDTO.username, userDetailDTO.password, roles)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetailsImpl, null, roles)
         SecurityContextHolder.getContext().authentication = authenticationToken
         filterChain.doFilter(request, response)
     }
