@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @Slf4j
 @RestController
 @Tag(name = "测试")
-@RequestMapping("/user")
+//@RequestMapping("/user")
 class TestController {
 
     @Autowired
@@ -32,8 +32,8 @@ class TestController {
 
     @Operation(summary = "测试接口")
     @GetMapping("/hello")
-    @AuditLog(operation = OperationType.CREATE, data = AuditDataType.DID, scheme = "su")
-    @TestAOP
+//    @AuditLog(operation = OperationType.CREATE, data = AuditDataType.DID, scheme = "su")
+//    @TestAOP
     fun hello(): Boolean {
         return true
     }

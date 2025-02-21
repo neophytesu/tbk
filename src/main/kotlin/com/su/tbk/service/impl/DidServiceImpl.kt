@@ -1,5 +1,7 @@
 package com.su.tbk.service.impl
 
+import com.su.tbk.core.generateBaseDidDocument
+import com.su.tbk.core.generateDid
 import com.su.tbk.core.generateHexKeys
 import com.su.tbk.core.generateKeys
 import com.su.tbk.service.DidService
@@ -25,5 +27,12 @@ class DidServiceImpl : DidService {
 
     override fun removeKey(privateKey: String): Boolean {
         return keysService.removeKey(privateKey)
+    }
+
+    override fun createDid(publicKey1: String, publicKey2: String): String {
+        val didDocument= generateBaseDidDocument(publicKey1, publicKey2)
+        val did = generateDid(didDocument)
+        TODO("Implement createDid() method")
+        return did
     }
 }

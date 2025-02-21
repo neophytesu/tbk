@@ -21,22 +21,26 @@ class DidController {
     fun createKey(): BaseResponse {
         return success(didService.createKey())
     }
+
     @Operation(summary = "获取密钥列表", description = "获取当前用户的所有密钥列表")
     @GetMapping("/getKeyList")
     fun getKeyList(): BaseResponse {
         return success(didService.getKeyList())
     }
+
     @Operation(summary = "删除密钥", description = "删除指定DID的公私钥对")
     @DeleteMapping("/removeKey/{privateKey}")
     fun removeKey(@PathVariable privateKey: String): BaseResponse {
-        if (didService.removeKey(privateKey)){
+        if (didService.removeKey(privateKey)) {
             return success()
         }
         return error("删除失败")
     }
-    @Operation(summary = "创建DID", description = "根据公钥生成DID")
-    @GetMapping("/createDid")
-    fun createDid(): BaseResponse {
-        TODO("待实现")
+
+    @Operation(summary = "创建DID", description = "根据十六进制主备公钥生成DID")
+    @GetMapping("/createDid/{publicKey1}/{publicKey2}")
+    fun createDid(@PathVariable publicKey1: String, @PathVariable publicKey2: String): BaseResponse {
+        val did = didService.createDid(publicKey1, publicKey2)
+        return success(did)
     }
 }

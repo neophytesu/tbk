@@ -40,6 +40,8 @@ dependencies {
         set("hutoolVersion", "5.8.34")
         set("fabricGatewayVersion", "2.2.9")
         set("jacksonVersion", "2.18.2")
+        set("spdxToolsVersion", "2.2.8")
+        set("gsonVersion", "2.12.1")
     }
     //实现依赖
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -61,6 +63,8 @@ dependencies {
     implementation("org.hyperledger.fabric:fabric-gateway-java:${ext.get("fabricGatewayVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-freemarker")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${ext.get("jacksonVersion")}")
+    implementation("org.spdx:spdx-tools:${ext.get("spdxToolsVersion")}")
+    implementation("com.google.code.gson:gson:${ext.get("gsonVersion")}")
 
     //编译时依赖
     compileOnly("org.projectlombok:lombok")
