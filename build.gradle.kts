@@ -39,6 +39,7 @@ dependencies {
         set("testSecurityVersion", "6.4.1")
         set("hutoolVersion", "5.8.34")
         set("fabricGatewayVersion", "2.2.9")
+        set("fabricSdkVersion", "2.2.26")
         set("jacksonVersion", "2.18.2")
         set("spdxToolsVersion", "2.2.8")
         set("gsonVersion", "2.12.1")
@@ -65,6 +66,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${ext.get("jacksonVersion")}")
     implementation("org.spdx:spdx-tools:${ext.get("spdxToolsVersion")}")
     implementation("com.google.code.gson:gson:${ext.get("gsonVersion")}")
+    implementation("org.hyperledger.fabric-sdk-java:fabric-sdk-java:${ext.get("fabricSdkVersion")}")
+
 
     //编译时依赖
     compileOnly("org.projectlombok:lombok")
@@ -82,11 +85,12 @@ dependencies {
     //测试运行时依赖
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
-subprojects{
+subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
-    dependencies{
-        ext{
+    dependencies {
+        ext {
             set("fabricChaincodeVersion", "2.5.5")
         }
         implementation("org.hyperledger.fabric-chaincode-java:fabric-chaincode-shim:${ext.get("fabricChaincodeVersion")}")

@@ -1,8 +1,10 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     kotlin("jvm")
+    application
 }
 
 group = "com.su"
@@ -14,10 +16,13 @@ repositories {
         url = uri("https://jitpack.io")
     }
 }
-
+application {
+    mainClass.set("org.hyperledger.fabric.contract.ContractRouter")
+}
 dependencies {
     implementation("org.json:json:20250107")
     implementation("com.google.code.gson:gson:2.12.1")
+    implementation("org.hyperledger.fabric-chaincode-java:fabric-chaincode-shim:2.5.5")
     testImplementation(kotlin("test"))
 }
 
