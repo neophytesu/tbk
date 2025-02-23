@@ -4,10 +4,12 @@ import cn.hutool.core.codec.Base58
 import cn.hutool.core.codec.Base64
 import freemarker.template.Configuration
 import freemarker.template.Template
+import org.bouncycastle.crypto.ec.CustomNamedCurves
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
 import org.bouncycastle.jcajce.provider.digest.RIPEMD160
 import org.bouncycastle.jcajce.provider.digest.SHA256
+import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.io.File
 import java.io.StringWriter
@@ -15,6 +17,8 @@ import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.spec.ECGenParameterSpec
+import java.security.spec.ECParameterSpec
+import java.security.spec.ECPrivateKeySpec
 import java.time.Instant
 
 //获取模版
@@ -51,6 +55,17 @@ fun generateKeys(): KeyPair {
     val ecGenParameterSpec = ECGenParameterSpec("secp256k1")
     keyPairGenerator.initialize(ecGenParameterSpec, SecureRandom())
     return keyPairGenerator.generateKeyPair()
+}
+
+//从十六进制私钥复原回私钥对象
+fun recoverPrivateKey(privateKeyHex: String): PrivateKey {
+    val privateKeyVal = BigInteger(privateKeyHex, 16)
+    val curve = CustomNamedCurves.getByName("secp256r1")
+    val parameterSpec = org.bouncycastle.jce.spec.ECParameterSpec(curve.curve, curve.g, curve.n, curve.h)
+    val privateKeySpec = org.bouncycastle.jce.spec.ECPrivateKeySpec(privateKeyVal, parameterSpec)
+    val keyFactory = KeyFactory.getInstance("EC", BouncyCastleProvider())
+    val privateKey = keyFactory.generatePrivate(privateKeySpec) as BCECPrivateKey
+    return privateKey
 }
 
 //生成16进制秘钥对值
@@ -108,9 +123,10 @@ fun generateDidRequest(did: String, didDocument: String): String {
         )
     return generateString(template, dataMap)
 }
+
 //更新Did请求
-fun updateDidRequest(did: String, didDocument: String,signatureValue: String): String {
-    val template= getTemplate("UpdateDidRequest.json.ftl")
+fun updateDidRequest(did: String, didDocument: String, signatureValue: String): String {
+    val template = getTemplate("UpdateDidRequest.json.ftl")
     val timestamp = Instant.now().toEpochMilli().toString()
     val dataMap =
         mapOf(
@@ -121,6 +137,7 @@ fun updateDidRequest(did: String, didDocument: String,signatureValue: String): S
         )
     return generateString(template, dataMap)
 }
+
 //注销Did请求
 fun revokeDidRequest(did: String, signatureValue: String): String {
     val template = getTemplate("RevokeDidRequest.json.ftl")
@@ -133,6 +150,7 @@ fun revokeDidRequest(did: String, signatureValue: String): String {
         )
     return generateString(template, dataMap)
 }
+
 fun main() {
     Security.addProvider(BouncyCastleProvider())
     val keyPair1 = generateKeys()
