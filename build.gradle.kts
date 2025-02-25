@@ -27,6 +27,7 @@ repositories {
 
 dependencies {
 
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     ext {
         set("druidVersion", "1.2.24")
         set("mybatisPlusVersion", "3.5.9")
@@ -43,6 +44,7 @@ dependencies {
         set("jacksonVersion", "2.18.2")
         set("spdxToolsVersion", "2.2.8")
         set("gsonVersion", "2.12.1")
+        set("hutoolVersion", "5.8.36")
     }
     //实现依赖
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -67,6 +69,7 @@ dependencies {
     implementation("org.spdx:spdx-tools:${ext.get("spdxToolsVersion")}")
     implementation("com.google.code.gson:gson:${ext.get("gsonVersion")}")
     implementation("org.hyperledger.fabric-sdk-java:fabric-sdk-java:${ext.get("fabricSdkVersion")}")
+    implementation("cn.hutool:hutool-all:${ext.get("hutoolVersion")}")
 
 
     //编译时依赖
